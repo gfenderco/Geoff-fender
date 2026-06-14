@@ -32,7 +32,7 @@ h1,h2{font-family:var(--display);font-weight:700;line-height:1.04;letter-spacing
 .nav-inner{display:flex;align-items:center;justify-content:space-between}
 .brand{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink)}
 .brand .dot{color:var(--clay)}
-.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
 .nav-links a{font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .2s}
 .nav-links a:hover,.nav-links a.active{color:var(--ink)}
 .nav-cta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);padding:9px 16px;border-radius:100px;color:var(--ink)!important;transition:all .2s}
@@ -78,7 +78,9 @@ footer{background:var(--olive);color:rgba(241,233,218,.55);padding:30px 0}
   .bio-head-grid{grid-template-columns:1fr;gap:1.5rem}
   .portrait{max-width:240px}
   .facts-inner{grid-template-columns:repeat(2,1fr)}
-  .nav-links a:not(.nav-cta){display:none}
+  .nav-inner{flex-wrap:wrap;gap:6px 10px}
+  .nav-links{width:100%;gap:10px 14px}
+  .nav-links a{font-size:13px}
 }
 @media(max-width:440px){
   .facts-inner{grid-template-columns:1fr}
@@ -92,9 +94,11 @@ footer{background:var(--olive);color:rgba(241,233,218,.55);padding:30px 0}
   <div class="wrap nav-inner">
     <a href="index.html" class="brand">Geoffrey Fender<span class="dot">.</span></a>
     <div class="nav-links">
+      <a href="index.html#approach">Approach</a>
       <a href="index.html#platform">Platform</a>
       <a href="index.html#models">Models</a>
       <a href="index.html#deployments">Deployments</a>
+      <a href="case-studies.html">Case Studies</a>
       <a href="bio.html" class="active">Bio</a>
       <a href="index.html#contact" class="nav-cta">Get in touch</a>
     </div>

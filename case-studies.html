@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Studies | Geoffrey Fender</title>
+<meta name="description" content="Selected Food & Beverage projects led by Geoff Fender across campuses and sports &amp; entertainment venues.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#F1E9DA; --bone-2:#FBF6EC; --paper:#F7F1E5;
+  --ink:#231E17; --ink-soft:#5E5443; --ink-faint:#8A7E6A;
+  --clay:#B5532A; --olive:#23271A;
+  --line:rgba(35,30,23,.14); --line-soft:rgba(35,30,23,.08);
+  --line-dark:rgba(241,233,218,.16);
+  --display:'Bricolage Grotesque',sans-serif;
+  --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bone);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1000px;margin:0 auto;padding:0 28px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--clay);font-weight:500}
+h1,h2{font-family:var(--display);font-weight:700;line-height:1.04;letter-spacing:-.02em}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;background:var(--bone);border-bottom:1px solid var(--line);padding:16px 0}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink)}
+.brand .dot{color:var(--clay)}
+.nav-links{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.nav-links a{font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--ink)}
+.nav-cta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);padding:9px 16px;border-radius:100px;color:var(--ink)!important;transition:all .2s}
+.nav-cta:hover{background:var(--clay);border-color:var(--clay);color:#fff!important}
+
+/* header */
+.bio-head{padding:clamp(3.5rem,8vw,6rem) 0 clamp(2.5rem,5vw,4rem)}
+.bio-head-grid{display:grid;grid-template-columns:300px 1fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.portrait{border-radius:18px;overflow:hidden;aspect-ratio:1;box-shadow:0 30px 60px -32px rgba(35,30,23,.45);background:var(--bone-2)}
+.portrait img{width:100%;height:100%;object-fit:cover}
+.bio-head h1{font-size:clamp(2.2rem,5vw,3.6rem);margin:18px 0 0}
+.bio-head .role{font-family:var(--mono);font-size:13px;letter-spacing:.05em;color:var(--ink-soft);margin-top:16px;line-height:1.7}
+.bio-head .loc{display:inline-flex;align-items:center;gap:9px;margin-top:18px;font-size:14px;color:var(--ink-faint)}
+.bio-head .loc::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--clay)}
+
+/* prose */
+.prose{max-width:62ch;padding-bottom:clamp(2.5rem,5vw,4rem)}
+.prose p{font-size:1.12rem;color:var(--ink);margin-bottom:1.2em}
+.prose p.lead{font-size:clamp(1.25rem,2vw,1.5rem);font-family:var(--display);font-weight:600;line-height:1.3;letter-spacing:-.01em;color:var(--ink);margin-bottom:1em}
+.prose p+p{color:var(--ink-soft)}
+.prose em{font-style:italic}
+
+/* facts */
+.facts{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.facts-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.fact{background:var(--paper);padding:26px 22px}
+.fact .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--clay)}
+.fact .v{font-size:14px;color:var(--ink);margin-top:9px;line-height:1.5}
+
+/* cta */
+.cta-band{padding:clamp(3rem,6vw,5rem) 0;text-align:center}
+.cta-band h2{font-size:clamp(1.6rem,3.4vw,2.6rem);max-width:18ch;margin:0 auto}
+.cta-band .btn{display:inline-block;margin-top:28px;background:var(--clay);color:#fff;border-radius:100px;padding:15px 32px;font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;transition:background .2s}
+.cta-band .btn:hover{background:#C95E33}
+.cta-band .back{display:block;margin-top:22px;font-size:14px;color:var(--ink-faint)}
+.cta-band .back:hover{color:var(--ink)}
+
+footer{background:var(--olive);color:rgba(241,233,218,.55);padding:30px 0}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:12px}
+.foot-inner .brand{color:var(--bone);font-family:var(--display);font-size:16px}
+
+@media(max-width:760px){
+  .bio-head-grid{grid-template-columns:1fr;gap:1.5rem}
+  .portrait{max-width:240px}
+  .facts-inner{grid-template-columns:repeat(2,1fr)}
+  .nav-inner{flex-wrap:wrap;gap:6px 10px}
+  .nav-links{width:100%;gap:10px 14px}
+  .nav-links a{font-size:13px}
+}
+@media(max-width:440px){
+  .facts-inner{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* case studies */
+.cs-head{padding:clamp(3.5rem,8vw,6rem) 0 clamp(1.2rem,3vw,2rem)}
+.cs-head h1{font-size:clamp(2.4rem,6vw,4rem);margin:16px 0 0}
+.cs-head .sub{max-width:56ch;margin-top:20px;font-size:1.12rem;color:var(--ink-soft)}
+.cases{padding-bottom:clamp(1.5rem,4vw,3rem)}
+.case{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.8rem,4vw,3.5rem);align-items:center;padding:clamp(2.4rem,5vw,3.6rem) 0;border-top:1px solid var(--line)}
+.case-media{border-radius:16px;overflow:hidden;box-shadow:0 30px 60px -34px rgba(35,30,23,.5);background:var(--bone-2);aspect-ratio:16/10}
+.case-media img{width:100%;height:100%;object-fit:cover}
+.case:nth-child(even) .case-media{order:2}
+.case .loc{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--clay)}
+.case .loc::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--clay)}
+.case h2{font-size:clamp(1.7rem,3.4vw,2.5rem);margin:14px 0 0}
+.case p{font-size:1.06rem;color:var(--ink-soft);margin-top:16px;max-width:54ch}
+.case-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+.case-meta .tag{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line);border-radius:100px;padding:7px 13px}
+.case-facts{margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--ink-faint);line-height:1.85}
+.case-facts b{color:var(--ink-soft);font-weight:500}
+@media(max-width:760px){
+  .case{grid-template-columns:1fr;gap:1.3rem}
+  .case:nth-child(even) .case-media{order:0}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="brand">Geoffrey Fender<span class="dot">.</span></a>
+    <div class="nav-links">
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#platform">Platform</a>
+      <a href="index.html#models">Models</a>
+      <a href="index.html#deployments">Deployments</a>
+      <a href="case-studies.html" class="active">Case Studies</a>
+      <a href="bio.html">Bio</a>
+      <a href="index.html#contact" class="nav-cta">Get in touch</a>
+    </div>
+  </div>
+</nav>
+
+<header class="cs-head">
+  <div class="wrap">
+    <span class="eyebrow">Selected work</span>
+    <h1>Case studies.</h1>
+    <p class="sub">A few of the projects I&rsquo;ve helped bring to life &mdash; from campus dining reinvented to full-scale food &amp; beverage programs at some of the country&rsquo;s biggest venues.</p>
+  </div>
+</header>
+
+<section class="cases">
+  <div class="wrap">
+      <div class="case">
+        <div class="case-media"><img src="https://gallerycarts.com/wp-content/uploads/2025/02/Screenshot-2025-02-21-at-1.44.25%20PM.webp" alt="Ron Hart Foundation Market Nxt micro market at the University of Memphis" loading="lazy"></div>
+        <div class="case-body">
+          <span class="loc">Memphis, TN</span>
+          <h2>University of Memphis</h2>
+          <p>Transformed an existing campus store into the Ron Hart Foundation Market Nxt &mdash; a larger, more dynamic micro market in the cultural heart of the Maxine A. Smith Student Center. We grew the footprint and partnered with Compass Group&rsquo;s Envision, Chartwells Higher Education Dining, and Spirit Architecture Group on the vision, folding in Amazon&rsquo;s Just Walk Out technology for a seamless, modern grab-and-go experience the Tigers actually wanted.</p>
+          <div class="case-meta"><span class="tag">Micro Markets</span><span class="tag">Design</span><span class="tag">Build</span></div>
+          <div class="case-facts"><b>Industries</b> Campuses &middot; University<br><b>Partners</b> Amazon JWO, Chartwells, Compass Digital, Envision, Spirit Architecture Group</div>
+        </div>
+      </div>
+      <div class="case">
+        <div class="case-media"><img src="https://gallerycarts.com/wp-content/uploads/2025/02/gc-emory1-1536x843-1.webp" alt="Gallery electric vehicles deployed across the Emory University campus" loading="lazy"></div>
+        <div class="case-body">
+          <span class="loc">Atlanta, GA</span>
+          <h2>Emory University</h2>
+          <p>When Emory&rsquo;s main caf&eacute; went offline for construction, students and staff still needed quality food across campus. We deployed six electric vehicles as satellite food-service units &mdash; supported by the main kitchen and positioned in high-traffic areas &mdash; keeping fresh, made-to-order meals within easy reach without the long walk.</p>
+          <div class="case-meta"><span class="tag">E-Vehicles</span><span class="tag">Build</span></div>
+          <div class="case-facts"><b>Industries</b> Campuses &middot; University<br><b>Scope</b> 6 electric vehicles deployed as satellite kitchens</div>
+        </div>
+      </div>
+      <div class="case">
+        <div class="case-media"><img src="https://gallerycarts.com/wp-content/uploads/2025/01/SoFi-Stadium-Retail-Carts-24-scaled.webp" alt="Gallery retail and concession builds inside SoFi Stadium" loading="lazy"></div>
+        <div class="case-body">
+          <span class="loc">Los Angeles, CA</span>
+          <h2>SoFi Stadium</h2>
+          <p>A full-scale food &amp; beverage build for one of the country&rsquo;s premier venues: 61 concession kiosks, 39 condiment carts, 32 plaza bars, 6 suite bars, 6 retail kiosks, plus cooking and action stations, mobile support units, and autonomous stores. Every piece was designed and built with premium details &mdash; Italian stone and tile, self-contained plumbing, and a permanent, upscale look.</p>
+          <div class="case-meta"><span class="tag">Kiosks</span><span class="tag">Micro Markets</span><span class="tag">Mobile Carts</span><span class="tag">Design</span><span class="tag">Build</span></div>
+          <div class="case-facts"><b>Industries</b> Sports &amp; Entertainment<br><b>Partners</b> Legends, BF Construction, AiFi</div>
+        </div>
+      </div>
+      <div class="case">
+        <div class="case-media"><img src="https://gallerycarts.com/wp-content/uploads/2025/01/12.16.24-FTMxGALLERY-SEANJORGENSEN-25-scaled.webp" alt="Custom mobile carts and micro markets at Allegiant Stadium" loading="lazy"></div>
+        <div class="case-body">
+          <span class="loc">Las Vegas, NV</span>
+          <h2>Allegiant Stadium</h2>
+          <p>A custom fleet of mobile carts plus ten micro markets for the Raiders&rsquo; home &mdash; eight standalone autonomous stores and two reimagined bar locations redesigned alongside local teams. Every unit was built to unique design requirements to match the energy of the venue.</p>
+          <div class="case-meta"><span class="tag">Mobile Carts</span><span class="tag">Micro Markets</span><span class="tag">Design</span><span class="tag">Build</span></div>
+          <div class="case-facts"><b>Industries</b> Sports &amp; Entertainment<br><b>Partners</b> Amazon JWO, CAAIcon, Falkbuilt, Levy, Raiders</div>
+        </div>
+      </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>Want the story behind any of these?</h2>
+    <a class="btn" href="index.html#contact">Get in touch</a>
+    <a class="back" href="index.html">&larr; Back to home</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span class="brand">Geoffrey Fender<span style="color:var(--clay)">.</span></span>
+    <span>Consultative Food &amp; Beverage sales &middot; Colorado Springs, CO</span>
+    <span>&copy; <span id="yr"></span></span>
+  </div>
+</footer>
+
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+</body>
+</html>
