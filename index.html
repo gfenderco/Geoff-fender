@@ -472,13 +472,13 @@ form.addEventListener('submit',function(e){
   var action=form.getAttribute('action');
   if(action.indexOf('YOUR_FORM_ID')>-1){
     status.className='form-status err';
-    status.textContent='Form not connected yet \u2014 add your Formspree endpoint to start receiving messages.';
+    status.textContent='Form not connected yet, add your Formspree endpoint to start receiving messages.';
     return;
   }
   var btn=form.querySelector('.send');btn.disabled=true;btn.textContent='Sending\u2026';
   fetch(action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}})
   .then(function(r){
-    if(r.ok){form.reset();status.className='form-status ok';status.textContent='Thanks \u2014 your message is on its way. I\'ll be in touch soon.';}
+    if(r.ok){form.reset();status.className='form-status ok';status.textContent='Thanks, your message is on its way. I\'ll be in touch soon.';}
     else{status.className='form-status err';status.textContent='Something went wrong. Email me directly at g.fenderco@gmail.com.';}
   }).catch(function(){status.className='form-status err';status.textContent='Something went wrong. Email me directly at g.fenderco@gmail.com.';})
   .finally(function(){btn.disabled=false;btn.textContent='Send it over';});
