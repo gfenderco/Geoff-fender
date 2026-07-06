@@ -228,6 +228,7 @@ footer{background:var(--olive);color:rgba(241,233,218,.55);border-top:1px solid 
       <a href="#approach">Approach</a>
       <a href="#platform">Solutions</a>
       <a href="#models">Models</a>
+      <a href="#roi-calc">ROI Calculator</a>
       <a href="#deployments">Deployments</a>
       <a href="case-studies.html">Case Studies</a>
       <a href="bio.html">Bio</a>
@@ -383,6 +384,167 @@ footer{background:var(--olive);color:rgba(241,233,218,.55);border-top:1px solid 
     <p class="roi-foot">Illustrative model based on a standard FLA Godega at 2 runs/day, 75% sellout, 240 operating days. Actual results vary by venue, menu mix, pricing, and operating model. I'll build the numbers around your site, not the other way around.</p>
   </div>
 </section>
+
+<style id="roicalc-style">
+#roi-calc{background:var(--paper)}
+#roi-calc h2 em{font-style:normal;color:var(--clay)}
+#roi-calc .rc-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:clamp(2.5rem,5vw,4rem)}
+#roi-calc .rc-card{background:var(--bone-2);border:1px solid var(--line);border-radius:16px;padding:28px}
+#roi-calc .rc-card h3{font-family:var(--display);font-size:1.15rem;font-weight:700;margin:0 0 20px;letter-spacing:-.01em}
+#roi-calc .rc-card h3.mt{margin-top:28px}
+#roi-calc .rc-field{margin-bottom:20px}
+#roi-calc .rc-field label{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px}
+#roi-calc .rc-field label .val{color:var(--clay);font-weight:500;font-size:12px}
+#roi-calc select,#roi-calc input[type=number]{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bone);color:var(--ink);font-family:var(--body);font-size:14px;font-weight:500}
+#roi-calc input[type=number]{font-family:var(--mono)}
+#roi-calc input[type=range]{width:100%;accent-color:var(--clay);margin-top:4px}
+#roi-calc .rc-results{background:linear-gradient(160deg,var(--clay),var(--clay-deep));color:#fff;display:flex;flex-direction:column;justify-content:space-between}
+#roi-calc .rc-results h3{color:#fff}
+#roi-calc .rc-stat{margin-bottom:18px}
+#roi-calc .rc-stat .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+#roi-calc .rc-results .rc-stat .lbl{color:#fff;opacity:.85}
+#roi-calc .rc-stat .num{font-family:var(--display);font-size:30px;font-weight:700;line-height:1.15;margin-top:6px;letter-spacing:-.01em}
+#roi-calc .rc-stat .num small{font-family:var(--body);font-size:13px;font-weight:400;opacity:.85}
+#roi-calc hr.rc-div{border:none;border-top:1px solid rgba(255,255,255,.25);margin:20px 0}
+#roi-calc .rc-bar{background:rgba(255,255,255,.22);border-radius:999px;height:8px;margin-top:12px;overflow:hidden}
+#roi-calc .rc-bar span{display:block;height:100%;background:#fff;border-radius:999px;transition:width .3s ease;width:0}
+#roi-calc .rc-cta{margin-top:24px;display:block;text-align:center;background:#fff;color:var(--clay-deep);font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;padding:14px;border-radius:100px;text-decoration:none;transition:transform .1s}
+#roi-calc .rc-cta:hover{transform:translateY(-1px)}
+#roi-calc .rc-eco{background:var(--bone-2);border:1px solid var(--line);border-radius:16px;padding:24px 28px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+#roi-calc .rc-eco-label{font-family:var(--display);font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+#roi-calc .rc-eco-stats{display:flex;gap:36px;flex-wrap:wrap}
+#roi-calc .rc-eco-stats .rc-stat{margin:0}
+#roi-calc .rc-eco-stats .num{color:#4C7A54;font-family:var(--mono);font-weight:500;font-size:26px}
+#roi-calc .rc-note{margin-top:24px;font-size:12.5px;color:var(--ink-faint);font-family:var(--mono);line-height:1.7;max-width:80ch}
+@media(max-width:920px){#roi-calc .rc-grid{grid-template-columns:1fr}}
+@media(max-width:620px){#roi-calc .rc-eco-stats{gap:20px}}
+</style>
+
+<section class="roicalc pad" id="roi-calc">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal" style="color:var(--clay)">Run it yourself</span>
+      <h2 class="reveal">Test <em>your</em> numbers.</h2>
+      <p class="sub reveal">Plug in your own fleet and get a real-time estimate of revenue potential, gas savings, and payback period on a Gallery EV fleet.</p>
+    </div>
+    <div class="rc-grid">
+      <div class="rc-card">
+        <h3>Your fleet</h3>
+        <div class="rc-field">
+          <label>Vehicle model</label>
+          <select id="model">
+            <option value="90000">Godega — $90,000</option>
+            <option value="90000">Grill-Mobile — $90,000</option>
+            <option value="90000">Bartini — $90,000</option>
+            <option value="65000">Cafe Express Deluxe — $65,000</option>
+          </select>
+        </div>
+        <div class="rc-field">
+          <label>Number of vehicles <span class="val" id="qtyVal">2</span></label>
+          <input type="range" id="qty" min="1" max="10" value="2">
+        </div>
+        <div class="rc-field">
+          <label>Avg. daily revenue per cart <span class="val" id="revVal">$650</span></label>
+          <input type="range" id="rev" min="200" max="2000" step="10" value="650">
+        </div>
+        <div class="rc-field">
+          <label>Operating days per year <span class="val" id="daysVal">260</span></label>
+          <input type="range" id="days" min="50" max="365" value="260">
+        </div>
+        <div class="rc-field">
+          <label>COGS <span class="val" id="cogsVal">32%</span></label>
+          <input type="range" id="cogs" min="0" max="70" value="32">
+        </div>
+        <h3 class="mt">Current gas costs</h3>
+        <div class="rc-field">
+          <label>Gas cost, per cart / month</label>
+          <input type="number" id="gas" value="380">
+        </div>
+        <div class="rc-field">
+          <label>Avg. price per gallon of gas</label>
+          <input type="number" id="gasPrice" value="3.50" step="0.01">
+        </div>
+      </div>
+      <div class="rc-card rc-results">
+        <div>
+          <h3>Your estimate</h3>
+          <div class="rc-stat">
+            <div class="lbl">Annual revenue potential</div>
+            <div class="num" id="outRevenue">$0</div>
+          </div>
+          <div class="rc-stat">
+            <div class="lbl">Annual net profit after COGS</div>
+            <div class="num" id="outProfit">$0</div>
+          </div>
+          <div class="rc-stat">
+            <div class="lbl">Annual gas savings</div>
+            <div class="num" id="outSavings">$0 <small>going electric</small></div>
+          </div>
+          <hr class="rc-div">
+          <div class="rc-stat">
+            <div class="lbl">Estimated payback period</div>
+            <div class="num" id="outPayback">— <small>months</small></div>
+            <div class="rc-bar"><span id="paybackBar"></span></div>
+          </div>
+        </div>
+        <a href="#contact" class="rc-cta">Talk to Geoffrey about your fleet →</a>
+      </div>
+    </div>
+    <div class="rc-eco">
+      <div class="rc-eco-label">🌱 Environmental impact</div>
+      <div class="rc-eco-stats">
+        <div class="rc-stat">
+          <div class="lbl">Gallons of gas saved / year</div>
+          <div class="num" id="outGallons">0</div>
+        </div>
+        <div class="rc-stat">
+          <div class="lbl">CO₂ emissions avoided / year</div>
+          <div class="num" id="outCO2">0 <small>lbs</small></div>
+        </div>
+      </div>
+    </div>
+    <p class="rc-note">Estimates are directional, based on inputs you provide, and don't account for financing terms, incentives, or site-specific factors. Talk to your Gallery Carts rep for an exact quote. Emissions figure uses the EPA average of 19.6 lbs of CO₂ per gallon of gasoline burned.</p>
+  </div>
+</section>
+<script>
+(function(){
+  var g = function(id){return document.getElementById(id);};
+  var fmt = function(n){return '$' + Math.round(n).toLocaleString('en-US');};
+  var CO2 = 19.6;
+  function calc(){
+    var price=Number(g('model').value), qty=Number(g('qty').value), rev=Number(g('rev').value),
+        days=Number(g('days').value), cogsPct=Number(g('cogs').value)/100,
+        gas=Number(g('gas').value)||0, gasPrice=Number(g('gasPrice').value)||0.01;
+    g('qtyVal').textContent=qty;
+    g('revVal').textContent='$'+rev;
+    g('daysVal').textContent=days;
+    g('cogsVal').textContent=Number(g('cogs').value)+'%';
+    var annualRevenue=rev*days*qty;
+    var annualNetProfit=annualRevenue*(1-cogsPct);
+    var annualGasSavings=gas*12*qty;
+    var gallonsSaved=annualGasSavings/gasPrice;
+    var co2Lbs=gallonsSaved*CO2;
+    var annualReturn=annualNetProfit+annualGasSavings;
+    var totalInvestment=price*qty;
+    var paybackMonths=annualReturn>0?(totalInvestment/annualReturn)*12:0;
+    g('outRevenue').textContent=fmt(annualRevenue);
+    g('outProfit').textContent=fmt(annualNetProfit);
+    g('outSavings').innerHTML=fmt(annualGasSavings)+' <small>going electric</small>';
+    g('outGallons').textContent=Math.round(gallonsSaved).toLocaleString('en-US');
+    if(co2Lbs>=2000){g('outCO2').innerHTML=(co2Lbs/2000).toFixed(1)+' <small>tons</small>';}
+    else{g('outCO2').innerHTML=Math.round(co2Lbs).toLocaleString('en-US')+' <small>lbs</small>';}
+    if(paybackMonths>0&&isFinite(paybackMonths)){
+      g('outPayback').innerHTML=Math.round(paybackMonths)+' <small>months</small>';
+      g('paybackBar').style.width=Math.min(100,(paybackMonths/36)*100)+'%';
+    } else {
+      g('outPayback').innerHTML='— <small>months</small>';
+      g('paybackBar').style.width='0%';
+    }
+  }
+  ['model','qty','rev','days','cogs','gas','gasPrice'].forEach(function(id){g(id).addEventListener('input',calc);});
+  calc();
+})();
+</script>
 
 <section class="deploy pad" id="deployments">
   <div class="wrap">
