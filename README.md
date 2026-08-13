@@ -1,2 +1,0 @@
-# Geoff-fender
-Portfolio page
