@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dodge game</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+    touch-action: none;
+  }
+  #site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 42px;
+    background: #0a0a0a;
+    border-bottom: 1px solid #1f1f1f;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px;
+    overflow-x: auto;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    white-space: nowrap;
+  }
+  #site-nav a {
+    color: #888;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  #site-nav a:hover { color: #fff; background: #1a1a1a; }
+  #site-nav a.active { color: #000; background: #fff; }
+  #game-area {
+    position: fixed;
+    top: 42px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+  #box {
+    position: absolute;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(255,255,255,0.6);
+    border-radius: 6px;
+  }
+  #hud {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    opacity: 0.7;
+    user-select: none;
+    line-height: 1.6;
+  }
+  #hud .row { display: flex; gap: 6px; }
+  #hud .label { opacity: 0.6; }
+  #msg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 22px;
+    text-align: center;
+    display: none;
+    user-select: none;
+  }
+  #msg span {
+    display: block;
+    opacity: 0.6;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  #hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    opacity: 0.4;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<nav id="site-nav">
+  <a href="index.html">Shrink Box</a>
+  <a href="reaction.html">Reaction</a>
+  <a href="dodge.html">Dodge</a>
+  <a href="whack.html">Whack-a-Dot</a>
+  <a href="memory.html">Memory</a>
+  <a href="colormatch.html">Color Match</a>
+</nav>
+
+<div id="game-area">
+  <div id="hud">
+    <div class="row"><span class="label">time:</span><span id="time">0.00s</span></div>
+    <div class="row"><span class="label">best:</span><span id="best">—</span></div>
+  </div>
+  <div id="box"></div>
+  <div id="msg"></div>
+  <div id="hint">move your cursor near the box — it runs</div>
+</div>
+
+<script>
+  (function () {
+    var links = document.querySelectorAll('#site-nav a');
+    var here = location.pathname.split('/').pop() || 'index.html';
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === here) a.classList.add('active');
+    });
+  })();
+
+  var area = document.getElementById('game-area');
+  var box = document.getElementById('box');
+  var timeEl = document.getElementById('time');
+  var bestEl = document.getElementById('best');
+  var msg = document.getElementById('msg');
+  var hint = document.getElementById('hint');
+
+  var BOX_SIZE = 46;
+  var FLEE_RADIUS = 150;
+  var COLLIDE_DIST = BOX_SIZE / 2 + 12;
+  var SPEED = 9;
+
+  var BEST_KEY = 'dodge_best_ms';
+
+  function getBest() {
+    var v = null;
+    try { v = localStorage.getItem(BEST_KEY); } catch (e) {}
+    return v ? parseFloat(v) : null;
+  }
+  function setBest(s) {
+    try { localStorage.setItem(BEST_KEY, String(s)); } catch (e) {}
+  }
+  function renderBest() {
+    var b = getBest();
+    bestEl.textContent = b !== null ? b.toFixed(2) + 's' : '—';
+  }
+
+  var mouse = { x: null, y: null };
+  var boxPos = { x: 0, y: 0 };
+  var running = false;
+  var over = false;
+  var startTime = null;
+  var rafId = null;
+
+  box.style.width = BOX_SIZE + 'px';
+  box.style.height = BOX_SIZE + 'px';
+
+  function render() {
+    box.style.left = (boxPos.x - BOX_SIZE / 2) + 'px';
+    box.style.top = (boxPos.y - BOX_SIZE / 2) + 'px';
+  }
+
+  function resetGame() {
+    boxPos.x = area.clientWidth / 2;
+    boxPos.y = area.clientHeight / 2;
+    running = false;
+    over = false;
+    startTime = null;
+    timeEl.textContent = '0.00s';
+    msg.style.display = 'none';
+    box.style.display = 'block';
+    hint.style.display = 'block';
+    render();
+  }
+
+  function gameOver() {
+    running = false;
+    over = true;
+    var survived = (performance.now() - startTime) / 1000;
+    var best = getBest();
+    var isNew = best === null || survived > best;
+    if (isNew) setBest(survived);
+    renderBest();
+    box.style.display = 'none';
+    hint.style.display = 'none';
+    msg.innerHTML = 'caught! survived ' + survived.toFixed(2) + 's' + (isNew ? ' — new best!' : '') + '<span>click anywhere to try again</span>';
+    msg.style.display = 'block';
+  }
+
+  function loop() {
+    if (!running) return;
+
+    var dx = boxPos.x - mouse.x;
+    var dy = boxPos.y - mouse.y;
+    var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+
+    if (dist < COLLIDE_DIST) {
+      gameOver();
+      return;
+    }
+
+    if (dist < FLEE_RADIUS) {
+      var force = (FLEE_RADIUS - dist) / FLEE_RADIUS;
+      boxPos.x += (dx / dist) * SPEED * force;
+      boxPos.y += (dy / dist) * SPEED * force;
+      var half = BOX_SIZE / 2;
+      boxPos.x = Math.min(Math.max(boxPos.x, half), area.clientWidth - half);
+      boxPos.y = Math.min(Math.max(boxPos.y, half), area.clientHeight - half);
+      render();
+    }
+
+    timeEl.textContent = ((performance.now() - startTime) / 1000).toFixed(2) + 's';
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function pointerMove(x, y) {
+    var rect = area.getBoundingClientRect();
+    mouse.x = x - rect.left;
+    mouse.y = y - rect.top;
+    if (!running && !over) {
+      running = true;
+      startTime = performance.now();
+      hint.style.display = 'none';
+      rafId = requestAnimationFrame(loop);
+    }
+  }
+
+  area.addEventListener('mousemove', function (e) {
+    pointerMove(e.clientX, e.clientY);
+  });
+
+  area.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    if (t) pointerMove(t.clientX, t.clientY);
+  }, { passive: false });
+
+  area.addEventListener('click', function () {
+    if (over) resetGame();
+  });
+
+  window.addEventListener('resize', function () {
+    if (!running) {
+      boxPos.x = area.clientWidth / 2;
+      boxPos.y = area.clientHeight / 2;
+      render();
+    }
+  });
+
+  renderBest();
+  resetGame();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>memory game</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  #site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 42px;
+    background: #0a0a0a;
+    border-bottom: 1px solid #1f1f1f;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px;
+    overflow-x: auto;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    white-space: nowrap;
+  }
+  #site-nav a {
+    color: #888;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  #site-nav a:hover { color: #fff; background: #1a1a1a; }
+  #site-nav a.active { color: #000; background: #fff; }
+  #game-area {
+    position: fixed;
+    top: 42px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+  }
+  #grid {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    width: min(70vmin, 460px);
+    height: min(70vmin, 460px);
+  }
+  .tile {
+    background: #141414;
+    border: 2px solid #2a2a2a;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.12s ease, box-shadow 0.12s ease;
+  }
+  .tile.lit {
+    background: #fff;
+    box-shadow: 0 0 30px rgba(255,255,255,0.8);
+  }
+  #hud {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    opacity: 0.7;
+    user-select: none;
+    line-height: 1.6;
+  }
+  #hud .row { display: flex; gap: 6px; }
+  #hud .label { opacity: 0.6; }
+  #msg {
+    position: absolute;
+    top: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 22px;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+  }
+  #msg span {
+    display: block;
+    opacity: 0.6;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<nav id="site-nav">
+  <a href="index.html">Shrink Box</a>
+  <a href="reaction.html">Reaction</a>
+  <a href="dodge.html">Dodge</a>
+  <a href="whack.html">Whack-a-Dot</a>
+  <a href="memory.html">Memory</a>
+  <a href="colormatch.html">Color Match</a>
+</nav>
+
+<div id="game-area">
+  <div id="hud">
+    <div class="row"><span class="label">round:</span><span id="round">0</span></div>
+    <div class="row"><span class="label">best:</span><span id="best">—</span></div>
+  </div>
+  <div id="msg">click to start<span>watch the pattern, then repeat it</span></div>
+  <div id="grid">
+    <div class="tile" data-i="0"></div>
+    <div class="tile" data-i="1"></div>
+    <div class="tile" data-i="2"></div>
+    <div class="tile" data-i="3"></div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var links = document.querySelectorAll('#site-nav a');
+    var here = location.pathname.split('/').pop() || 'index.html';
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === here) a.classList.add('active');
+    });
+  })();
+
+  var msg = document.getElementById('msg');
+  var roundEl = document.getElementById('round');
+  var bestEl = document.getElementById('best');
+  var tiles = Array.prototype.slice.call(document.querySelectorAll('.tile'));
+
+  var BEST_KEY = 'memory_best_round';
+
+  function getBest() {
+    var v = null;
+    try { v = localStorage.getItem(BEST_KEY); } catch (e) {}
+    return v ? parseInt(v, 10) : null;
+  }
+  function setBest(s) {
+    try { localStorage.setItem(BEST_KEY, String(s)); } catch (e) {}
+  }
+  function renderBest() {
+    var b = getBest();
+    bestEl.textContent = b !== null ? b : '—';
+  }
+
+  var state = 'idle';
+  var sequence = [];
+  var userIndex = 0;
+  var STEP_MS = 600;
+  var LIT_MS = 350;
+
+  function flash(idx, dur) {
+    tiles[idx].classList.add('lit');
+    setTimeout(function () { tiles[idx].classList.remove('lit'); }, dur || LIT_MS);
+  }
+
+  function playSequence() {
+    state = 'showing';
+    var i = 0;
+    function step() {
+      if (i >= sequence.length) {
+        state = 'input';
+        return;
+      }
+      flash(sequence[i]);
+      i++;
+      setTimeout(step, STEP_MS);
+    }
+    setTimeout(step, 400);
+  }
+
+  function nextRound() {
+    sequence.push(Math.floor(Math.random() * 4));
+    userIndex = 0;
+    roundEl.textContent = sequence.length;
+    playSequence();
+  }
+
+  function startGame() {
+    sequence = [];
+    msg.style.display = 'none';
+    nextRound();
+  }
+
+  function gameOver() {
+    state = 'over';
+    var cleared = sequence.length - 1;
+    var best = getBest();
+    var isNew = best === null || cleared > best;
+    if (isNew) setBest(cleared);
+    renderBest();
+    msg.innerHTML = 'wrong tile — cleared ' + cleared + ' round' + (cleared === 1 ? '' : 's') + (isNew ? ' — new best!' : '') + '<span>click to play again</span>';
+    msg.style.display = 'block';
+  }
+
+  tiles.forEach(function (tile) {
+    tile.addEventListener('click', function () {
+      if (state !== 'input') return;
+      var idx = parseInt(tile.getAttribute('data-i'), 10);
+      flash(idx, 200);
+      if (idx === sequence[userIndex]) {
+        userIndex++;
+        if (userIndex === sequence.length) {
+          state = 'pause';
+          setTimeout(nextRound, 700);
+        }
+      } else {
+        gameOver();
+      }
+    });
+  });
+
+  msg.addEventListener('click', function () {
+    if (state === 'idle' || state === 'over') startGame();
+  });
+
+  renderBest();
+</script>
+
+</body>
+</html>

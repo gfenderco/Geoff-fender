@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>reaction game</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  #site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 42px;
+    background: #0a0a0a;
+    border-bottom: 1px solid #1f1f1f;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px;
+    overflow-x: auto;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    white-space: nowrap;
+  }
+  #site-nav a {
+    color: #888;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  #site-nav a:hover { color: #fff; background: #1a1a1a; }
+  #site-nav a.active { color: #000; background: #fff; }
+  #game-area {
+    position: fixed;
+    top: 42px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+    background: #000;
+    transition: background 0.1s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+  #center {
+    text-align: center;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  }
+  #main-msg {
+    font-size: 28px;
+    font-weight: 600;
+  }
+  #sub-msg {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.6;
+  }
+  #best {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: #fff;
+    opacity: 0.6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<nav id="site-nav">
+  <a href="index.html">Shrink Box</a>
+  <a href="reaction.html">Reaction</a>
+  <a href="dodge.html">Dodge</a>
+  <a href="whack.html">Whack-a-Dot</a>
+  <a href="memory.html">Memory</a>
+  <a href="colormatch.html">Color Match</a>
+</nav>
+
+<div id="game-area">
+  <div id="best">best: —</div>
+  <div id="center">
+    <div id="main-msg">click to start</div>
+    <div id="sub-msg">wait for green, then click as fast as you can</div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var links = document.querySelectorAll('#site-nav a');
+    var here = location.pathname.split('/').pop() || 'index.html';
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === here) a.classList.add('active');
+    });
+  })();
+
+  var area = document.getElementById('game-area');
+  var mainMsg = document.getElementById('main-msg');
+  var subMsg = document.getElementById('sub-msg');
+  var bestEl = document.getElementById('best');
+
+  var COLORS = { idle: '#000', waiting: '#3a0d0d', ready: '#0fa84c', toosoon: '#000', result: '#000' };
+
+  var state = 'idle';
+  var readyTime = null;
+  var timeoutId = null;
+
+  var BEST_KEY = 'reaction_best_ms';
+
+  function getBest() {
+    var v = null;
+    try { v = localStorage.getItem(BEST_KEY); } catch (e) {}
+    return v ? parseInt(v, 10) : null;
+  }
+
+  function setBest(ms) {
+    try { localStorage.setItem(BEST_KEY, String(ms)); } catch (e) {}
+  }
+
+  function renderBest() {
+    var b = getBest();
+    bestEl.textContent = 'best: ' + (b !== null ? b + 'ms' : '—');
+  }
+
+  function setState(s, main, sub) {
+    state = s;
+    area.style.background = COLORS[s];
+    mainMsg.textContent = main;
+    subMsg.textContent = sub || '';
+  }
+
+  function startRound() {
+    if (timeoutId) clearTimeout(timeoutId);
+    setState('waiting', 'wait for it...', '');
+    var delay = 1200 + Math.random() * 2800;
+    timeoutId = setTimeout(function () {
+      readyTime = performance.now();
+      setState('ready', 'CLICK!', '');
+    }, delay);
+  }
+
+  area.addEventListener('click', function () {
+    if (state === 'ready') {
+      var reaction = Math.round(performance.now() - readyTime);
+      var best = getBest();
+      var isNewBest = best === null || reaction < best;
+      if (isNewBest) setBest(reaction);
+      renderBest();
+      setState('result', reaction + 'ms', (isNewBest ? 'new best! ' : '') + 'click to go again');
+    } else if (state === 'waiting') {
+      if (timeoutId) clearTimeout(timeoutId);
+      setState('toosoon', 'too soon', 'you clicked before it turned green — click to try again');
+    } else {
+      startRound();
+    }
+  });
+
+  renderBest();
+</script>
+
+</body>
+</html>

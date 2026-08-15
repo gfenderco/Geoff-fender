@@ -14,6 +14,36 @@
     overflow: hidden;
     touch-action: manipulation;
   }
+  #site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 42px;
+    background: #0a0a0a;
+    border-bottom: 1px solid #1f1f1f;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px;
+    overflow-x: auto;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    white-space: nowrap;
+  }
+  #site-nav a {
+    color: #888;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  #site-nav a:hover { color: #fff; background: #1a1a1a; }
+  #site-nav a.active { color: #000; background: #fff; }
+  #game-area {
+    position: fixed;
+    top: 42px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+  }
   #box {
     position: absolute;
     background: #fff;
@@ -21,11 +51,9 @@
     box-shadow: 0 0 20px rgba(255,255,255,0.6);
     transition: box-shadow 0.15s ease;
   }
-  #box:hover {
-    box-shadow: 0 0 30px rgba(255,255,255,0.9);
-  }
+  #box:hover { box-shadow: 0 0 30px rgba(255,255,255,0.9); }
   #hud {
-    position: fixed;
+    position: absolute;
     top: 16px;
     left: 16px;
     color: #fff;
@@ -35,15 +63,10 @@
     user-select: none;
     line-height: 1.6;
   }
-  #hud .row {
-    display: flex;
-    gap: 6px;
-  }
-  #hud .label {
-    opacity: 0.6;
-  }
+  #hud .row { display: flex; gap: 6px; }
+  #hud .label { opacity: 0.6; }
   #msg {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -64,14 +87,34 @@
 </head>
 <body>
 
-<div id="hud">
-  <div class="row"><span class="label">time:</span><span id="time">0.00s</span></div>
-  <div class="row"><span class="label">clicks:</span><span id="count">0</span></div>
+<nav id="site-nav">
+  <a href="index.html">Shrink Box</a>
+  <a href="reaction.html">Reaction</a>
+  <a href="dodge.html">Dodge</a>
+  <a href="whack.html">Whack-a-Dot</a>
+  <a href="memory.html">Memory</a>
+  <a href="colormatch.html">Color Match</a>
+</nav>
+
+<div id="game-area">
+  <div id="hud">
+    <div class="row"><span class="label">time:</span><span id="time">0.00s</span></div>
+    <div class="row"><span class="label">clicks:</span><span id="count">0</span></div>
+  </div>
+  <div id="box"></div>
+  <div id="msg"></div>
 </div>
-<div id="box"></div>
-<div id="msg"></div>
 
 <script>
+  (function () {
+    var links = document.querySelectorAll('#site-nav a');
+    var here = location.pathname.split('/').pop() || 'index.html';
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === here) a.classList.add('active');
+    });
+  })();
+
+  var area = document.getElementById('game-area');
   var box = document.getElementById('box');
   var hud = document.getElementById('count');
   var timeEl = document.getElementById('time');
@@ -99,15 +142,15 @@
   }
 
   function placeCentered() {
-    var x = (window.innerWidth - size) / 2;
-    var y = (window.innerHeight - size) / 2;
+    var x = (area.clientWidth - size) / 2;
+    var y = (area.clientHeight - size) / 2;
     box.style.left = x + 'px';
     box.style.top = y + 'px';
   }
 
   function placeRandom() {
-    var maxX = Math.max(0, window.innerWidth - size);
-    var maxY = Math.max(0, window.innerHeight - size);
+    var maxX = Math.max(0, area.clientWidth - size);
+    var maxY = Math.max(0, area.clientHeight - size);
     var x = Math.random() * maxX;
     var y = Math.random() * maxY;
     box.style.left = x + 'px';
@@ -164,10 +207,13 @@
   window.addEventListener('resize', function () {
     if (box.style.display !== 'none') {
       var rect = box.getBoundingClientRect();
-      var maxX = Math.max(0, window.innerWidth - size);
-      var maxY = Math.max(0, window.innerHeight - size);
-      box.style.left = Math.min(rect.left, maxX) + 'px';
-      box.style.top = Math.min(rect.top, maxY) + 'px';
+      var maxX = Math.max(0, area.clientWidth - size);
+      var maxY = Math.max(0, area.clientHeight - size);
+      var areaRect = area.getBoundingClientRect();
+      var relLeft = rect.left - areaRect.left;
+      var relTop = rect.top - areaRect.top;
+      box.style.left = Math.min(relLeft, maxX) + 'px';
+      box.style.top = Math.min(relTop, maxY) + 'px';
     }
   });
 
