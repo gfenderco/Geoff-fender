@@ -1,11 +1,138 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>:)</title>
-<style>html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden;}iframe{position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;}</style>
+<title>shrink game</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  #box {
+    position: absolute;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255,255,255,0.6);
+    transition: box-shadow 0.15s ease;
+  }
+  #box:hover {
+    box-shadow: 0 0 30px rgba(255,255,255,0.9);
+  }
+  #hud {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    opacity: 0.6;
+    user-select: none;
+  }
+  #msg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 22px;
+    text-align: center;
+    display: none;
+    user-select: none;
+  }
+  #msg span {
+    display: block;
+    opacity: 0.6;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+</style>
 </head>
 <body>
-<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&loop=1&playlist=dQw4w9WgXcQ&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+<div id="hud">clicks: <span id="count">0</span></div>
+<div id="box"></div>
+<div id="msg">that's the smallest it gets<span>click to reset</span></div>
+
+<script>
+  var box = document.getElementById('box');
+  var hud = document.getElementById('count');
+  var msg = document.getElementById('msg');
+
+  var START_SIZE = 160;
+  var MIN_SIZE = 6;
+  var SHRINK_FACTOR = 0.85;
+
+  var size = START_SIZE;
+  var clicks = 0;
+
+  function placeCentered() {
+    var x = (window.innerWidth - size) / 2;
+    var y = (window.innerHeight - size) / 2;
+    box.style.left = x + 'px';
+    box.style.top = y + 'px';
+  }
+
+  function placeRandom() {
+    var maxX = Math.max(0, window.innerWidth - size);
+    var maxY = Math.max(0, window.innerHeight - size);
+    var x = Math.random() * maxX;
+    var y = Math.random() * maxY;
+    box.style.left = x + 'px';
+    box.style.top = y + 'px';
+  }
+
+  function render() {
+    box.style.width = size + 'px';
+    box.style.height = size + 'px';
+  }
+
+  function reset() {
+    size = START_SIZE;
+    clicks = 0;
+    hud.textContent = clicks;
+    msg.style.display = 'none';
+    box.style.display = 'block';
+    render();
+    placeCentered();
+  }
+
+  box.addEventListener('click', function (e) {
+    e.stopPropagation();
+    clicks++;
+    hud.textContent = clicks;
+
+    size = Math.max(MIN_SIZE, size * SHRINK_FACTOR);
+    render();
+
+    if (size <= MIN_SIZE) {
+      box.style.display = 'none';
+      msg.style.display = 'block';
+    } else {
+      placeRandom();
+    }
+  });
+
+  msg.addEventListener('click', reset);
+
+  window.addEventListener('resize', function () {
+    if (box.style.display !== 'none') {
+      var rect = box.getBoundingClientRect();
+      var maxX = Math.max(0, window.innerWidth - size);
+      var maxY = Math.max(0, window.innerHeight - size);
+      box.style.left = Math.min(rect.left, maxX) + 'px';
+      box.style.top = Math.min(rect.top, maxY) + 'px';
+    }
+  });
+
+  reset();
+</script>
+
 </body>
 </html>
